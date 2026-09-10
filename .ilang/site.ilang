@@ -1,0 +1,73 @@
+::ILANG
+[TYPE:config][PROJECT:vps-deals][LANG:zh]
+
+::STATE{@SITE, brand:"vps-deals", niche:"VPS hosting", domain:"https://vps-deals-promo-radar.pages.dev", locale:"en-US", currency:"USD"}
+
+::MODULE{PROVIDERS|title:抓哪几家 这里改了站就变}
+  RackNerd | https://www.racknerd.com/ | https://www.racknerd.com/specials/ |
+  Hostinger | https://www.hostinger.com/ | https://www.hostinger.com/vps-hosting?lang=en |
+  OVHcloud | https://us.ovhcloud.com/ | https://us.ovhcloud.com/vps/ |
+
+::MODULE{FIELDS|title:每条优惠提取什么}
+  title price currency offer_url valid_until source_url fetched_at billing_period terms evidence discount_text
+
+::MODULE{RUNTIME|title:更新与抓取上限}
+  schedule: "17 */6 * * *"
+  stale_after_hours: 48
+  request_timeout_seconds: 20
+  max_offers_per_provider: 24
+
+::MODULE{RENDER|title:英语站点渲染规则}
+  headline: "VPS offers. The full billing picture."
+  intro: "Compare official offers with the billing term, source and last-checked date in plain sight."
+  repository: "https://github.com/aweiht/vps-deals-promo-radar"
+
+::MODULE{SOURCE:racknerd|title:官方 VPS specials 卡片}
+  mode: "cards"
+  kind: "promotion"
+  container: ".plans-section .plan-card"
+  title: {"selector":".plan-header h3"}
+  price: {"selector":".price","regex":"(\\$\\s*[0-9]+\\.[0-9]{2})"}
+  currency_check: {"selector":".price .currency","regex":"^(\\$)$"}
+  billing: {"selector":".price .period"}
+  offer: {"selector":".plan-footer a.btn-plan","attr":"href"}
+  details: {"selector":".plan-features"}
+  terms_note: "Annual price. Check available locations, renewal terms and tax with RackNerd."
+  offer_hosts: ["my.racknerd.com"]
+  affiliate_program: "https://www.racknerd.com/affiliates-terms-of-service"
+  affiliate_note: "Coupon or cashback promotion requires approval. Some special products may not qualify. No account or commission is configured."
+
+::MODULE{SOURCE:hostinger|title:官方英语 VPS 价格卡片}
+  mode: "cards"
+  kind: "promotion"
+  container: "[data-qa=\"product-slug_vps:vps_kvm_1\"], [data-qa=\"product-slug_vps:vps_kvm_2\"], [data-qa=\"product-slug_vps:vps_kvm_4\"], [data-qa=\"product-slug_vps:vps_kvm_8\"]"
+  title: {"selector":".h-pricing-card__title"}
+  price: {"selector":".h-pricing-card__current-price .hw-price__value"}
+  currency_check: {"selector":".h-pricing-card__current-price .hw-price__currency","regex":"^(\\$)$"}
+  billing: {"selector":".h-pricing-card__current-price .hw-price__suffix"}
+  terms: {"selector":".h-pricing-card__renewal-price"}
+  discount: {"selector":".h-pricing-card__discount-tag","regex":"([0-9]+% off)"}
+  details: {"selector":".h-pricing-card__features"}
+  terms_note: "Monthly equivalent; a prepaid term may apply. Verify initial total and renewal at checkout."
+  deduplicate_identical: true
+  affiliate_program: "https://www.hostinger.com/legal/affiliate-program-agreement"
+  affiliate_note: "Coupon, discount and incentive promotion require prior approval. Do not enable affiliate links until the publisher account and this promotion method are approved."
+
+::MODULE{SOURCE:ovhcloud|title:官方美国 VPS 常规定价}
+  mode: "cards"
+  kind: "standard_price"
+  container: "[data-qa=\"VPS-1\"], [data-qa=\"VPS-2\"], [data-qa=\"VPS-3\"], [data-qa=\"VPS-4\"]"
+  title: {"selector":".product-card__title"}
+  price: {"selector":".tax-excluded-price .price-value","regex":"(\\$\\s*[0-9]+\\.[0-9]{2})"}
+  currency_check: {"selector":".tax-excluded-price .price-value","regex":"(\\$)"}
+  billing: {"selector":".tax-excluded-price .price-suffix"}
+  offer: {"selector":".ods-product-information-preview__cta a.button","attr":"href"}
+  terms_note: "Starting price, excluding tax. Commitment and region affect the final amount; inspect the linked configuration."
+  affiliate_program: "https://us.ovhcloud.com/partner-program/"
+  affiliate_note: "Business partner program; no verified consumer affiliate plan or commission is configured."
+
+::RULE{抓不到 price⇒不写 price 或相关结构化字段；来源没有截止日期⇒不写 valid_until}
+::RULE{已到期或抓取失败的记录退出当前优惠列表；详情明确标记状态，不输出可购买的 Product Offer}
+::RULE{只呈现原始 USD 价格与原始计费周期；不将普通标价伪装为折扣，不推断折扣百分比}
+::RULE{联盟链接为空时使用官方原始链接；只有取得厂商对账号与优惠推广方式的批准后才填写联盟链接}
+::BOUNDARY{never:编优惠 编价格 编佣金 绕过 robots 或反爬 自动发布社交内容|scope:permanent}
