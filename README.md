@@ -41,7 +41,7 @@ If a source fails, only that source's previous observations are retained, with t
 | Deterministic failure tests | 15 passing tests, including missing price, wrong currency, stale/expired data, conflicting duplicates, unsafe links and HTML escaping |
 | I-Lang is active | Test changes a provider in `site.ilang`, then verifies both collection and rendered routes use the new provider; removal also removes its current listings |
 | Browser | Desktop home and 390px mobile home/detail/comparison checked in the real browser; 13 comparison rows, no document overflow; official Hostinger link opened and matched the observed price |
-| GitHub automation | [First remote run passed](https://github.com/aweiht/vps-deals-promo-radar/actions/runs/34531840694): all 3 live sources, build, tests and an automatic data commit (`101fc4d`) |
+| GitHub automation | [Two remote runs passed; latest run](https://github.com/aweiht/vps-deals-promo-radar/actions/runs/34532707118) validated code `dcea80d`: all 3 live sources, tests, build, artifact checks and automatic data commits |
 | Google rich-results code test | [Two valid items](https://search.google.com/test/rich-results/result?id=wNh9W1npfRURztVQAwdwmA): Product snippet and BreadcrumbList; no critical errors, optional-field recommendations remain. This is a code test, not live URL/indexing validation. |
 | Cloudflare publication | Pending account login/connection and deployment verification |
 | Commercial | No affiliate account approved or tracking link configured; no revenue claim |
