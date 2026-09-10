@@ -69,6 +69,18 @@ def offer_schema(offer: dict) -> dict:
     return result
 
 
+def aggregate_schema(offers: list) -> dict:
+    """This publisher aggregates observed offers; it is not the selling merchant.
+
+    Even a single-source plan has exactly one observed offer, never a fabricated
+    range or seller count. Individual source Offers remain nested and auditable.
+    """
+    return {"@type": "AggregateOffer", "priceCurrency": offers[0]["currency"],
+            "offerCount": len(offers), "lowPrice": min(offers, key=lambda o: Decimal(o["price"]))["price"],
+            "highPrice": max(offers, key=lambda o: Decimal(o["price"]))["price"],
+            "offers": [offer_schema(offer) for offer in offers]}
+
+
 def list_schema(offers: list, origin: str) -> dict:
     return {"@type": "ItemList", "itemListElement": [
         {"@type": "ListItem", "position": position, "name": offer["title"], "url": origin + f"/deals/{offer['id']}/"}
@@ -190,7 +202,7 @@ def build(config: dict, data: dict, output: Path, now: datetime | None = None) -
         priced = [o for o in provider_offers if "price" in o]
         if priced:
             if len({billing_text(o) for o in priced}) == 1 and all(o.get("billing_period") for o in priced):
-                service["offers"] = {"@type": "AggregateOffer", "priceCurrency": "USD", "offerCount": len(priced), "lowPrice": min(priced, key=lambda o: Decimal(o["price"]))["price"], "highPrice": max(priced, key=lambda o: Decimal(o["price"]))["price"], "offers": [offer_schema(o) for o in priced]}
+                service["offers"] = aggregate_schema(priced)
             else:
                 service["offers"] = [offer_schema(o) for o in priced]
         render_page(path, f"{provider['name']} VPS offers — {month} | {site['brand']}", summary + f" Checked in {month}.", content, [service, breadcrumb_schema(crumbs, origin)], max((o["fetched_at"] for o in provider_offers), default=data["checked_at"]))
@@ -202,11 +214,11 @@ def build(config: dict, data: dict, output: Path, now: datetime | None = None) -
         crumbs = [("Offers", "/"), (provider["name"], f"/providers/{provider['id']}/"), (offer["title"], path)]
         url = provider["affiliate_url"] or offer["offer_url"]
         rel = "sponsored noopener noreferrer" if provider["affiliate_url"] else "noopener noreferrer"
-        facts = [("Provider", provider["name"]), ("Offer type", "Official promotion" if offer["kind"] == "promotion" else "Standard published price"), ("Billing", billing_text(offer)), ("Currency", offer.get("currency", "Not extracted")), ("Expiry", offer.get("valid_until", "Not stated in the extracted source")), ("Last checked", display_time(offer["fetched_at"]))]
+        facts = [("Provider", provider["name"]), ("Offer type", "Official promotion" if offer["kind"] == "promotion" else "Standard published price"), ("Coverage", "1 official offer recorded for this configuration"), ("Billing", billing_text(offer)), ("Currency", offer.get("currency", "Not extracted")), ("Expiry", offer.get("valid_until", "Not stated in the extracted source")), ("Last checked", display_time(offer["fetched_at"]))]
         content = templates["deal"].substitute(breadcrumbs=breadcrumbs(crumbs), provider_name=e(provider["name"]), kind=e("OFFICIAL PROMOTION" if offer["kind"] == "promotion" else "STANDARD PRICE"), offer_title=e(offer["title"]), details=e(offer.get("details") or "Published on the provider's official website."), facts="".join(f"<div><dt>{e(key)}</dt><dd>{e(value)}</dd></div>" for key, value in facts), evidence=e(offer["evidence"]), source_url=e(offer["source_url"]), fetched_at=e(display_time(offer["fetched_at"])), price=e(price_text(offer)), billing=e(billing_text(offer)), status=status, status_label=STATUS_LABELS[status], cta=f'<a class="button" href="{e(url)}" rel="{rel}">View official offer ↗</a>' if status == "observed" else f'<p>This listing is {"expired" if status == "expired" else "not currently verified"}. <a href="{e(provider["source_url"])}">Check the provider directly.</a></p>', terms=e(offer.get("terms") or "No additional terms were extracted. Check the source before purchasing."))
         schemas = [breadcrumb_schema(crumbs, origin)]
         if status == "observed" and "price" in offer:
-            schemas.append({"@type": "Product", "name": provider["name"] + " " + offer["title"], "description": offer.get("details") or offer["title"], "brand": {"@type": "Brand", "name": provider["name"]}, "url": origin + path, "offers": offer_schema(offer)})
+            schemas.append({"@type": "Product", "name": provider["name"] + " " + offer["title"], "description": offer.get("details") or offer["title"], "brand": {"@type": "Brand", "name": provider["name"]}, "url": origin + path, "offers": aggregate_schema([offer])})
         discount = " · " + offer["discount_text"] if offer.get("discount_text") else ""
         render_page(path, f"{provider['name']} {offer['title']} — {price_text(offer)}{discount} | {month}", f"{provider['name']} {offer['title']}: {price_text(offer)}{discount}. {billing_text(offer)}. Official source, terms and verification date.", content, schemas, offer["fetched_at"], indexable=status == "observed")
 

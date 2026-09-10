@@ -39,7 +39,11 @@ def verify(output: Path, config: dict) -> dict:
                 assert not products, filename + " must not advertise stale/unpriced Product"
             else:
                 assert len(products) == 1, filename + " missing Product"
-                embedded = products[0]["offers"]
+                aggregate = products[0]["offers"]
+                assert aggregate["@type"] == "AggregateOffer" and aggregate["offerCount"] == 1
+                assert aggregate["lowPrice"] == aggregate["highPrice"] == offer["price"]
+                assert len(aggregate["offers"]) == 1
+                embedded = aggregate["offers"][0]
                 assert embedded["price"] == offer["price"] and embedded["priceCurrency"] == offer["currency"]
                 assert embedded["url"] == offer["offer_url"]
                 assert embedded.get("priceValidUntil") == offer.get("valid_until")

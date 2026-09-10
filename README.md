@@ -40,8 +40,9 @@ If a source fails, only that source's previous observations are retained, with t
 | Local generated site | 19 pages; HTML, internal links, canonical URLs, sitemap and JSON-LD consistency checked |
 | Deterministic failure tests | 15 passing tests, including missing price, wrong currency, stale/expired data, conflicting duplicates, unsafe links and HTML escaping |
 | I-Lang is active | Test changes a provider in `site.ilang`, then verifies both collection and rendered routes use the new provider; removal also removes its current listings |
-| Browser | Desktop home and 390px mobile home/detail checked in the real browser; no document overflow |
-| GitHub automation | Pending first remote Action run |
+| Browser | Desktop home and 390px mobile home/detail/comparison checked in the real browser; 13 comparison rows, no document overflow; official Hostinger link opened and matched the observed price |
+| GitHub automation | [First remote run passed](https://github.com/aweiht/vps-deals-promo-radar/actions/runs/34531840694): all 3 live sources, build, tests and an automatic data commit (`101fc4d`) |
+| Google rich-results code test | [Two valid items](https://search.google.com/test/rich-results/result?id=wNh9W1npfRURztVQAwdwmA): Product snippet and BreadcrumbList; no critical errors, optional-field recommendations remain. This is a code test, not live URL/indexing validation. |
 | Cloudflare publication | Pending account login/connection and deployment verification |
 | Commercial | No affiliate account approved or tracking link configured; no revenue claim |
 
@@ -84,7 +85,7 @@ X and Facebook are intentionally not connected or auto-posted in v1. The public 
 - [Cloudflare Pages Free](https://developers.cloudflare.com/pages/platform/limits/) currently allows 500 builds/month. This schedule is about 112–124 builds/month before extra code pushes. Free-tier policies can change.
 - [GitHub schedules can be delayed or dropped](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows), and public-repository schedules can be disabled after 60 days without activity. Check failed Actions and preserve an owner who can repair source changes. This is not a promise of permanent unattended operation.
 - Domain registration age and commit frequency do not guarantee search ranking. A custom domain is useful for ownership, portability and brand continuity; it is not required to start, and no domain purchase is made by this project. [Google's domain-age explanation](https://developers.google.com/search/blog/2009/09/domainalter-und-ranking?hl=de).
-- Structured data describes what is visible. It does not guarantee rich results or indexing. [Google's Product guidance](https://developers.google.com/search/docs/appearance/structured-data/product-snippet) applies to individual product pages; provider pages use `Service`, lists use `ItemList`, and no unsupported FAQ promise is made.
+- Structured data describes what is visible. It does not guarantee rich results or indexing. [Google's Product guidance](https://developers.google.com/search/docs/appearance/structured-data/product-snippet) applies to individual product pages; individual plan pages use the documented shopping-aggregator `Product` + `AggregateOffer` model with exactly one observed source Offer (equal low/high prices and offerCount 1); provider pages use `Service`, lists use `ItemList`, and no unsupported FAQ promise is made. No product image, reviews or stock status are fabricated.
 
 When a custom domain is ready, add it in Pages, update the I-Lang `domain`, rebuild, and verify canonical/sitemap URLs. Configure and verify redirects from the old hostname as part of that migration; changing canonical text alone is not a redirect.
 
