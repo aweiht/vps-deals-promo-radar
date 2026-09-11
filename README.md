@@ -4,7 +4,7 @@ Official VPS offers with source links, billing terms, and last-checked timestamp
 
 Repository: [aweiht/vps-deals-promo-radar](https://github.com/aweiht/vps-deals-promo-radar)
 
-Live site: pending Cloudflare account connection. No `pages.dev` URL has been verified yet.
+Live site: [vps-deals-promo-radar-69v.pages.dev](https://vps-deals-promo-radar-69v.pages.dev/) — published and verified on 2026-09-11 UTC.
 
 Defaults: VPS hosting, `vps-deals`, `en-US`, USD. The provider list and extraction rules live in [.ilang/site.ilang](.ilang/site.ilang).
 
@@ -22,9 +22,9 @@ python3 -m http.server 8765 --directory site
 
 ## Deployment and automation
 
-Target: a public `aweiht/vps-deals-promo-radar` GitHub repository connected to Cloudflare Pages. Build command: `python build.py`. Output: `site`. Production branch: `main`.
+The public `aweiht/vps-deals-promo-radar` GitHub repository is connected to Cloudflare Pages project `vps-deals-promo-radar`, with automatic production deployments enabled. Build command: `python build.py`. Output: `site`. Production branch: `main`. Framework preset: none. No environment secrets are configured.
 
-The owner authorized this repository, code commits/push, a six-hour Actions update, and Cloudflare Pages publication. Connect this repository in **Cloudflare → Workers & Pages → Create → Pages → Import an existing Git repository**. Use the settings above, with no framework preset and no environment secrets. If the assigned Pages hostname differs, update `domain` in `.ilang/site.ilang` to the actual HTTPS origin and rebuild.
+Cloudflare assigned the `-69v` hostname suffix. The actual HTTPS origin is recorded in `.ilang/site.ilang` and used for every canonical URL, social URL and sitemap entry. To reproduce the deployment, use **Cloudflare → Workers & Pages → Create → Pages → Import an existing Git repository** with the settings above.
 
 The workflow runs at `00:17`, `06:17`, `12:17` and `18:17` UTC, plus relevant code pushes and manual **Run workflow** requests. It checks the sources, builds and validates the site, then commits real observations in `data/offers.json`. Cloudflare builds from that data on repository updates. `site/` is derived output and is not committed.
 
@@ -41,12 +41,13 @@ If a source fails, only that source's previous observations are retained, with t
 | Deterministic failure tests | 15 passing tests, including missing price, wrong currency, stale/expired data, conflicting duplicates, unsafe links and HTML escaping |
 | I-Lang is active | Test changes a provider in `site.ilang`, then verifies both collection and rendered routes use the new provider; removal also removes its current listings |
 | Browser | Desktop home and 390px mobile home/detail/comparison checked in the real browser; 13 comparison rows, no document overflow; official Hostinger link opened and matched the observed price |
-| GitHub automation | [Two remote runs passed; latest run](https://github.com/aweiht/vps-deals-promo-radar/actions/runs/34532707118) validated code `dcea80d`: all 3 live sources, tests, build, artifact checks and automatic data commits |
+| GitHub automation | [Real end-to-end run passed](https://github.com/aweiht/vps-deals-promo-radar/actions/runs/34549546675): all 3 live sources, 15 tests, build, artifact checks and an automatic data commit |
 | Google rich-results code test | [Two valid items](https://search.google.com/test/rich-results/result?id=wNh9W1npfRURztVQAwdwmA): Product snippet and BreadcrumbList; no critical errors, optional-field recommendations remain. This is a code test, not live URL/indexing validation. |
-| Cloudflare publication | Pending account login/connection and deployment verification |
+| Cloudflare publication | [Live site](https://vps-deals-promo-radar-69v.pages.dev/) verified: 19 HTML pages and 6 supporting resources returned HTTP 200; canonical, sitemap, JSON-LD and source lineage passed against the downloaded production output. Home, detail and comparison navigation also checked in the browser. |
+| Automatic publication | Action-generated commit [`e5ae33f`](https://github.com/aweiht/vps-deals-promo-radar/commit/e5ae33ffd14c1c614580d32e916819f01ab4457f) automatically produced [successful Pages deployment `d8b0cece`](https://d8b0cece.vps-deals-promo-radar-69v.pages.dev/), with the exact same full SHA. Live data matched the local build from that commit byte for byte. |
 | Commercial | No affiliate account approved or tracking link configured; no revenue claim |
 
-The remaining integration acceptance is a real Action-generated commit followed by a Cloudflare deployment of the same SHA. A successful local build alone does not establish that link.
+The collection-to-publication integration is verified. The owner can now inspect the public site; affiliate enrollment and commercial results remain unverified. The scheduler is configured every six hours; the canary above was manually triggered, so it proves the update and deployment path rather than guaranteeing future scheduled execution.
 
 ## Sources and billing
 
