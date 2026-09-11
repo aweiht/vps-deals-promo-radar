@@ -1,7 +1,7 @@
 ::ILANG
 [TYPE:config][PROJECT:vps-deals][LANG:zh]
 
-::STATE{@SITE, brand:"vps-deals", niche:"VPS hosting", domain:"https://vps-deals-promo-radar.pages.dev", locale:"en-US", currency:"USD"}
+::STATE{@SITE, brand:"vps-deals", niche:"VPS hosting", domain:"https://vps-deals-promo-radar-69v.pages.dev", locale:"en-US", currency:"USD"}
 
 ::MODULE{PROVIDERS|title:抓哪几家 这里改了站就变}
   RackNerd | https://www.racknerd.com/ | https://www.racknerd.com/specials/ |
