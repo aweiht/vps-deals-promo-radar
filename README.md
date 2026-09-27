@@ -32,22 +32,30 @@ The workflow uses GitHub's temporary, repository-scoped `GITHUB_TOKEN` via check
 
 If a source fails, only that source's previous observations are retained, with their original timestamps and an explicit failure state. The site is rebuilt without those offers in its current list, the state is committed, and the Action reports failure. There are no blind retries or fabricated empty commits. An interrupted build retains the last published deployment.
 
+## Current repair status — 2026-09-27 UTC
+
+The latest pre-repair [GitHub Actions run](https://github.com/aweiht/vps-deals-promo-radar/actions/runs/36296728050) failed RackNerd collection because the official page replaced `.plans-section .plan-card` with `.sn-plans .sn-plan`; the promotion is still present. The I-Lang selectors now follow the current cards and extract their titles, USD annual prices, billing period and official checkout links.
+
+The robots-aware local collection at 2026-09-27 10:47 UTC succeeded for RackNerd (5 offers), Hostinger (4) and OVHcloud (4). RackNerd's observed annual prices are $21.99, $35.99, $59.99, $89.99 and $119.99; no expiry was present. All 16 local tests, the 19-page build and artifact verification passed. Source hashes and the selector observation are recorded in the generated data and ignored `evidence/repair-racknerd/` directory.
+
+The currently published baseline still shows 8 current offers and the RackNerd source-failure notice. This local repair has not yet been rerun in GitHub Actions or published; remote verification remains pending review.
+
 ## Current acceptance
 
 | Layer | Evidence |
 | --- | --- |
-| Real local collection | RackNerd 5 promotions, Hostinger 4 promotions, OVHcloud 4 standard-price plans; all three robots checks and HTML requests succeeded on 2026-09-10 UTC |
+| Real local collection | RackNerd 5 promotions, Hostinger 4 promotions, OVHcloud 4 standard-price plans; all three robots checks and HTML requests succeeded on 2026-09-27 10:47 UTC |
 | Local generated site | 19 pages; HTML, internal links, canonical URLs, sitemap and JSON-LD consistency checked |
-| Deterministic failure tests | 15 passing tests, including missing price, wrong currency, stale/expired data, conflicting duplicates, unsafe links and HTML escaping |
+| Deterministic tests | 16 passing tests, including the current five-card RackNerd markup, missing price, wrong currency, stale/expired data, conflicting duplicates, unsafe links and HTML escaping |
 | I-Lang is active | Test changes a provider in `site.ilang`, then verifies both collection and rendered routes use the new provider; removal also removes its current listings |
 | Browser | Desktop home and 390px mobile home/detail/comparison checked in the real browser; 13 comparison rows, no document overflow; official Hostinger link opened and matched the observed price |
-| GitHub automation | [Real end-to-end run passed](https://github.com/aweiht/vps-deals-promo-radar/actions/runs/34549546675): all 3 live sources, 15 tests, build, artifact checks and an automatic data commit |
+| GitHub automation | Earlier [end-to-end run passed](https://github.com/aweiht/vps-deals-promo-radar/actions/runs/34549546675). The latest [pre-repair run](https://github.com/aweiht/vps-deals-promo-radar/actions/runs/36296728050) failed only RackNerd collection; a post-repair run is pending |
 | Google rich-results code test | [Two valid items](https://search.google.com/test/rich-results/result?id=wNh9W1npfRURztVQAwdwmA): Product snippet and BreadcrumbList; no critical errors, optional-field recommendations remain. This is a code test, not live URL/indexing validation. |
 | Cloudflare publication | [Live site](https://vps-deals-promo-radar-69v.pages.dev/) verified: 19 HTML pages and 6 supporting resources returned HTTP 200; canonical, sitemap, JSON-LD and source lineage passed against the downloaded production output. Home, detail and comparison navigation also checked in the browser. |
 | Automatic publication | Action-generated commit [`e5ae33f`](https://github.com/aweiht/vps-deals-promo-radar/commit/e5ae33ffd14c1c614580d32e916819f01ab4457f) automatically produced [successful Pages deployment `d8b0cece`](https://d8b0cece.vps-deals-promo-radar-69v.pages.dev/), with the exact same full SHA. Live data matched the local build from that commit byte for byte. |
 | Commercial | No affiliate account approved or tracking link configured; no revenue claim |
 
-The collection-to-publication integration is verified. The owner can now inspect the public site; affiliate enrollment and commercial results remain unverified. The scheduler is configured every six hours; the canary above was manually triggered, so it proves the update and deployment path rather than guaranteeing future scheduled execution.
+The earlier collection-to-publication integration is verified. As of 2026-09-27, the published baseline shows 8 current offers and RackNerd's source-failure notice; this local repair still needs a post-repair Action run and publication check. Affiliate enrollment and commercial results remain unverified. The scheduler is configured every six hours; the prior canary was manually triggered, so it proves the update and deployment path rather than guaranteeing future scheduled execution.
 
 ## Sources and billing
 

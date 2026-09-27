@@ -16,14 +16,13 @@ from config import ROOT, https_url, read_config
 from scraper import collect, normalize_price, parse_offers, Document
 from verify import verify
 
-# Minimal factual excerpt from RackNerd's official specials page, checked
-# 2026-09-10 UTC. Changes below are explicitly synthetic failure-path tests.
-CARD = '''<section class="plans-section"><article class="plan-card">
-<header class="plan-header"><h3>1 GB KVM VPS</h3></header>
-<div class="price"><span class="currency">$</span> 21.99 <span class="period">/year</span></div>
-<ul class="plan-features"><li>1 vCPU Core</li><li>20 GB SSD Storage</li><li>1 GB RAM</li></ul>
-<footer class="plan-footer"><a class="btn-plan" href="https://my.racknerd.com/cart.php?a=add&amp;pid=952">Order Now</a></footer>
+# One current-card excerpt; the full five-card observed fixture covers the changed markup.
+CARD = '''<section class="sn-plans"><article class="sn-plan">
+<header class="sn-plan-head"><h3>1 GB KVM VPS</h3><p class="sn-price"><span>$</span> 21.99 <small>/year</small></p></header>
+<ul><li>1 vCPU Core</li><li>20 GB SSD Storage</li><li>1 GB RAM</li></ul>
+<a class="oca-btn oca-btn-primary oca-btn-block" href="https://my.racknerd.com/cart.php?a=add&amp;pid=952">Order now</a>
 </article></section>'''
+RACKNERD_CURRENT_PAGE = (Path(__file__).parent / "fixtures/racknerd-specials-current.html").read_text(encoding="utf-8")
 NOW = datetime(2026, 9, 10, 21, 0, tzinfo=timezone.utc)
 FETCHED = "2026-09-10T21:00:00Z"
 
@@ -57,6 +56,18 @@ class PipelineTests(unittest.TestCase):
         self.assertEqual(self.offer["price"], "21.99")
         self.assertEqual(self.offer["billing_period"], "/year")
         self.assertNotIn("valid_until", self.offer)
+
+    def test_current_racknerd_markup_extracts_official_prices_periods_and_checkout_links(self):
+        offers = parse_offers(RACKNERD_CURRENT_PAGE, self.provider, FETCHED, self.provider["source_url"], "fixture-sha")
+        observed = {item["title"]: (item["price"], item["billing_period"], item["offer_url"]) for item in offers}
+        self.assertEqual(observed, {
+            "1 GB KVM VPS": ("21.99", "/year", "https://my.racknerd.com/cart.php?a=add&pid=952"),
+            "2 GB KVM VPS": ("35.99", "/year", "https://my.racknerd.com/cart.php?a=add&pid=953"),
+            "4 GB KVM VPS": ("59.99", "/year", "https://my.racknerd.com/cart.php?a=add&pid=954"),
+            "6 GB KVM VPS": ("89.99", "/year", "https://my.racknerd.com/cart.php?a=add&pid=955"),
+            "8 GB KVM VPS": ("119.99", "/year", "https://my.racknerd.com/cart.php?a=add&pid=956"),
+        })
+        self.assertEqual(len(offers), 5)
 
     def test_missing_price_is_not_invented(self):
         html = CARD.replace("21.99", "Contact us")
