@@ -6,7 +6,7 @@
   Python 3.11+ 标准库；静态 HTML/CSS 与无依赖原生 JavaScript 渐进交互；无运行时推理、第三方 Python 包、手工 API 密钥或付费服务。
 ::MODULE{LAYOUT|title:目录与命名}
   .ilang/ 存放唯一站点配置 site.ilang；templates/ 存放 HTML 模板；assets/ 存放品牌样式与图片。
-  data/ 存放抓取结果和来源状态；tests/ 存放确定性验证与最小来源样例；site/ 为生成输出。
+  data/ 存放抓取结果、来源状态和持久化页面内容日期 page-state.json；tests/ 存放确定性验证与最小来源样例；site/ 为生成输出。
   evidence/ 存放本地验收证据，不提交；英文文件名使用 snake_case 或 kebab-case。
   生成文件可在限定输出目录内覆写；清理和删除须取得明确授权，不自动清理其他目录。
 ::MODULE{START|title:启动}

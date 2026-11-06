@@ -14,6 +14,7 @@
 ::MODULE{RUNTIME|title:更新与抓取上限}
   schedule: "17 */6 * * *"
   stale_after_hours: 48
+  historical_index_days: 30
   request_timeout_seconds: 20
   max_offers_per_provider: 24
 
@@ -63,6 +64,7 @@
   currency_check: {"selector":".tax-excluded-price .price-value","regex":"(\\$)"}
   billing: {"selector":".tax-excluded-price .price-suffix"}
   offer: {"selector":".ods-product-information-preview__cta a.button","attr":"href"}
+  details: {"selector":".card-specs__wrapper"}
   terms_note: "Starting price, excluding tax. Commitment and region affect the final amount; inspect the linked configuration."
   affiliate_program: "https://us.ovhcloud.com/partner-program/"
   affiliate_note: "Business partner program; no verified consumer affiliate plan or commission is configured."

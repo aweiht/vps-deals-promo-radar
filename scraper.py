@@ -322,7 +322,7 @@ def parse_offers(html: str, provider: dict, fetched_at: str, source_url: str, di
     for item in output:
         if item["id"] in unique:
             previous = unique[item["id"]]
-            fields = ("title", "price", "currency", "billing_period", "offer_url", "valid_until", "terms")
+            fields = ("title", "price", "currency", "billing_period", "offer_url", "valid_until", "terms", "details", "discount_text")
             if not rules.get("deduplicate_identical") or any(previous.get(key) != item.get(key) for key in fields):
                 raise ValueError("Duplicate offers contain ambiguous or conflicting prices/terms")
         else:

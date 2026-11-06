@@ -12,6 +12,7 @@ from xml.etree import ElementTree
 
 from config import ROOT, read_config
 from scraper import Document
+from build import timestamp
 
 
 def verify(output: Path, config: dict) -> dict:
@@ -20,6 +21,7 @@ def verify(output: Path, config: dict) -> dict:
     data = json.loads((output / "data/offers.json").read_text())
     offers = {o["id"]: o for o in data["offers"]}
     titles = set()
+    indexable_urls = set()
     stylesheets = set()
     for filename in pages:
         html = (output / filename).read_text()
@@ -31,6 +33,11 @@ def verify(output: Path, config: dict) -> dict:
         canonical = doc.select('link[rel="canonical"]')
         expected = origin + "/" + filename.removesuffix("index.html")
         assert len(canonical) == 1 and canonical[0].attrs["href"] == expected, filename + " invalid canonical"
+        robots = doc.select('meta[name="robots"]')
+        assert len(robots) == 1, filename + " missing robots metadata"
+        indexable = robots[0].attrs["content"] == "index,follow"
+        if indexable:
+            indexable_urls.add(expected)
         assert len(doc.select("h1")) == 1, filename + " must have one h1"
         assert doc.select('meta[name="description"]'), filename + " missing description"
         structured_scripts = doc.select('script[type="application/ld+json"]')
@@ -46,6 +53,7 @@ def verify(output: Path, config: dict) -> dict:
         assert not script.text(False).strip(), filename + " unexpected inline script"
         if filename.startswith("deals/"):
             offer = offers[filename.split("/")[1]]
+            assert indexable == offer["detail_indexable"], filename + " incorrect historical indexing"
             products = [item for item in graph if item["@type"] == "Product"]
             if offer["display_status"] != "observed" or "price" not in offer:
                 assert not products, filename + " must not advertise stale/unpriced Product"
@@ -85,9 +93,10 @@ def verify(output: Path, config: dict) -> dict:
     sitemap = ElementTree.parse(output / "sitemap.xml")
     namespace = {"s": "http://www.sitemaps.org/schemas/sitemap/0.9"}
     entries = sitemap.findall("s:url", namespace)
+    assert {entry.find("s:loc", namespace).text for entry in entries} == indexable_urls, "Sitemap must match indexable routes"
     for entry in entries:
         assert entry.find("s:loc", namespace).text.startswith(origin + "/")
-        assert entry.find("s:lastmod", namespace).text
+        timestamp(entry.find("s:lastmod", namespace).text)
     assert f"Sitemap: {origin}/sitemap.xml" in (output / "robots.txt").read_text()
     return {"valid_pages": len(pages), "sitemap_urls": len(entries), "offers": len(offers), "checks": "metadata, canonical, source lineage, JSON-LD, local links, interaction script, stylesheet resources"}
 

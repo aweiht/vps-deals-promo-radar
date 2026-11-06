@@ -1,0 +1,78 @@
+{
+  "/": {
+    "lastmod": "2026-11-06T17:48:12Z",
+    "sha256": "4a39b8c0d34a6b500087bc1e7fa36f48e16795d9c0a01de1b0e4a55be3bff81b"
+  },
+  "/about/": {
+    "lastmod": "2026-11-06T17:48:12Z",
+    "sha256": "d8cfeb5101ee2750fb372dcf7000aaa3251c68557fc64ab765752a2b13f93cb6"
+  },
+  "/compare/": {
+    "lastmod": "2026-11-06T17:48:12Z",
+    "sha256": "9222533774ab620cc7a3fe51025db8574b7626e38866a5f0996329a9a7ca525a"
+  },
+  "/deals/112ad9a48d64285f/": {
+    "lastmod": "2026-11-06T17:48:12Z",
+    "sha256": "05695a45df5298fe6f20d914755683f2c5f873569d07dc146df0755b429e1817"
+  },
+  "/deals/29c32ec944d82ce8/": {
+    "lastmod": "2026-11-06T17:48:12Z",
+    "sha256": "96482412af5d68ceba434e00ba5b9caaaa0e157d74a484c0860dcca5aab8870f"
+  },
+  "/deals/2adea073cbc6d2b8/": {
+    "lastmod": "2026-11-06T17:48:12Z",
+    "sha256": "713a17a88824013c8fcec84dca4ad16aab7b9211c305445bd7d0f5292525541d"
+  },
+  "/deals/2b1dcfda54309e26/": {
+    "lastmod": "2026-11-06T17:48:12Z",
+    "sha256": "22d4797a21011344e94e4dc0e013fa1a5691680284f49144bace05bd24754c6e"
+  },
+  "/deals/5f63a987f7e0e3f9/": {
+    "lastmod": "2026-11-06T17:48:12Z",
+    "sha256": "9d9e835a0e4857154477e45ce1be32da7db5237c2bd880219b11e248038bc017"
+  },
+  "/deals/68ca7a165d5e28f8/": {
+    "lastmod": "2026-11-06T17:48:12Z",
+    "sha256": "6e67cfee2f81fcd513359d8c4ce7eb8450d94e15fe392b6b266c3304faae7601"
+  },
+  "/deals/7150dcd303bc8671/": {
+    "lastmod": "2026-11-06T17:48:12Z",
+    "sha256": "e3ee835396813da3c63528e5973ec8257b2e4f36c072b9e95b96e69863535a66"
+  },
+  "/deals/738381c80d264972/": {
+    "lastmod": "2026-11-06T17:48:12Z",
+    "sha256": "e18beed2a3f356ce21329c1798ed7fde6538ee9f111214a4bc85260baac79620"
+  },
+  "/deals/93d57d42be31e647/": {
+    "lastmod": "2026-11-06T17:48:12Z",
+    "sha256": "189f6a6f808e579bd73a78acd0010edad837657776bbb19e6a382e5a55e8e518"
+  },
+  "/deals/a17b8d4a181e5144/": {
+    "lastmod": "2026-11-06T17:48:12Z",
+    "sha256": "a0462c8f69418d869fce89c6a4219d3888e9d580dfdaec6f2d6984f75fae1335"
+  },
+  "/deals/a86224639fad44b5/": {
+    "lastmod": "2026-11-06T17:48:12Z",
+    "sha256": "34dd8432785aab6cf4bcafe7ee253d684ddf1175a75e9e12e773a38c27e5d1f2"
+  },
+  "/deals/bf8ebbd0f29a9c5d/": {
+    "lastmod": "2026-11-06T17:48:12Z",
+    "sha256": "a36e33bea7458b125fb779583c982c2971d1f069f3ef8132bd3fef4907a59933"
+  },
+  "/deals/cbb6102b1e8d0a86/": {
+    "lastmod": "2026-11-06T17:48:12Z",
+    "sha256": "533a2f647797c976a6aebbee9b460fbd578323d0100153e9df29e87afaa4d01d"
+  },
+  "/providers/hostinger/": {
+    "lastmod": "2026-11-06T17:48:12Z",
+    "sha256": "e59e97770b26cc41a7f14a0fa0a980124128934334e0b80b5277231bd3d3e753"
+  },
+  "/providers/ovhcloud/": {
+    "lastmod": "2026-11-06T17:48:12Z",
+    "sha256": "b691d2945ade41f2d9437eb00096a2740fd6107d4e37da50444157ed880ab447"
+  },
+  "/providers/racknerd/": {
+    "lastmod": "2026-11-06T17:48:12Z",
+    "sha256": "63a269fe328db4568ae361bcb4ef4dbb11967d5aff0b3314c84204cd81d3110f"
+  }
+}

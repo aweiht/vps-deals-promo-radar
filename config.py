@@ -103,6 +103,8 @@ def read_config(path: Path | str = ROOT / ".ilang/site.ilang") -> dict:
     runtime = parsed_modules.get("RUNTIME", {})
     if not 1 <= runtime.get("stale_after_hours", 0) <= 168:
         raise ValueError("stale_after_hours must be 1..168")
+    if not 1 <= runtime.get("historical_index_days", 0) <= 90:
+        raise ValueError("historical_index_days must be 1..90")
     if not 1 <= runtime.get("request_timeout_seconds", 0) <= 30:
         raise ValueError("request_timeout_seconds must be 1..30")
     if not 1 <= runtime.get("max_offers_per_provider", 0) <= 100:

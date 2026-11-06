@@ -8,6 +8,17 @@ Live site: [vpsdealsguide.com](https://vpsdealsguide.com/) · [Pages hostname](h
 
 Defaults: VPS hosting, `vps-deals`, `en-US`, USD. The provider list and extraction rules live in [.ilang/site.ilang](.ilang/site.ilang).
 
+## SEO reliability repair — 2026-11-07
+
+Authorized scope: fix the four findings in the preceding SEO audit, validate them, and publish through the existing GitHub → Cloudflare pipeline.
+
+- Temporary source failures still remove offers from the current catalogue, comparison, purchase CTA and Product/Offer schema. Historical details retain `index,follow` and sitemap discovery for up to 30 days from the last successful observation, with “Last recorded price” and “Needs rechecking” labels. Known expiry or a longer lapse produces `noindex`; configured-provider removal and permanently absent source records keep the existing removal policy. The I-Lang `historical_index_days` setting owns this boundary.
+- `data/page-state.json` persists each route's rendered-content fingerprint and `lastmod`. Explicit observation timestamps and cosmetic month labels are excluded; price, terms, hardware, status, links and template content participate. About has its own fingerprint. The first tracked build establishes a baseline rather than inventing earlier dates. Actions commits the state with the source observations so fresh Cloudflare checkouts preserve dates.
+- OVH's actual specification wrapper now feeds card summaries, detail facts and CPU/RAM/storage comparison columns. Published `vCore` / `vCores` wording is retained. Missing values stay “Not extracted”; conflicting duplicate hardware fails collection.
+- The old Pages hostname now uses an enabled account-level Cloudflare Bulk Redirect (301), preserving paths and query strings. Live probes of the homepage, provider, detail and data paths each returned one redirect followed by HTTP 200. The rule is limited to the old hostname; the canonical apex and other projects are outside its match.
+
+Local verification: 38 deterministic tests passed. A real robots-aware collection succeeded for all three providers (13 offers), followed by a 19-page / 19-sitemap-URL build and artifact verification. Failure/recovery, 30-day expiry boundary, same-content fresh-checkout dates, substantive price/terms changes and all four OVH configurations are covered. Independent review found no blocking issue in the changed paths. Desktop and 390 px browser checks confirmed the eight-column comparison, all four OVH configurations, no document overflow and keyboard-accessible horizontal table scrolling. Production publication is the remaining step. Evidence is in ignored `evidence/seo-fixes/`.
+
 ## Copy cleanup and SEO audit — 2026-11-07
 
 Replaced abstract headlines, slogans and section labels with VPS pricing, billing and source descriptions. Home, provider, comparison and individual plan headings now identify their contents directly. Plan title tags include the original billing period; starting-price records are labelled “From”. The social card uses the same plain wording. Product schema, URL structure, pricing data and source failure rules are unchanged.
@@ -16,7 +27,7 @@ Read-only audit: all 19 canonical pages returned HTTP 200 with indexable metadat
 
 Google [PageSpeed mobile report](https://pagespeed.web.dev/analysis/https-vpsdealsguide-com/e0p331g59s?form_factor=mobile), captured 2026-11-07 01:20 Asia/Shanghai before the copy-only release: performance 98, accessibility 100, best practices 92, SEO 100; LCP 1.5 s, TBT 0 ms, CLS 0. This is a homepage lab test. CrUX field data is unavailable; the current Search Console account lacks access to this site's property, so actual indexing, selected canonicals, traffic and ranking remain unverified. Lighthouse identified a Cloudflare Insights script blocked by the existing same-origin CSP. No CSP relaxation or analytics setting change was made.
 
-Open recommendations, not automatically implemented by this audit: separate temporary source failure from detail-page indexing; use substantive content modification times for sitemap lastmod; expose OVH hardware specifications already present in official evidence; consolidate the Pages hostname with a path-preserving redirect. Decide whether to disable the injected Cloudflare Insights script or configure analytics consistently. Optional www support is an entry-point choice, not a blocker for the canonical apex. Full private audit evidence is in ignored `evidence/seo-audit/`.
+The four priority recommendations from this historical audit are covered by the repair above. Separate low-priority choices remain: decide whether to disable the injected Cloudflare Insights script or configure analytics consistently. Optional www support is an entry-point choice, not a blocker for the canonical apex. Full private audit evidence is in ignored `evidence/seo-audit/`.
 
 ## Current design release — 2026-11-07
 
@@ -46,7 +57,7 @@ The public `aweiht/vps-deals-promo-radar` GitHub repository is connected to Clou
 
 Cloudflare assigned the original `-69v` Pages hostname suffix. The current canonical origin is `https://vpsdealsguide.com`, as recorded in `.ilang/site.ilang`, and is used for canonical URLs, social URLs and sitemap entries. To reproduce the deployment, use **Cloudflare → Workers & Pages → Create → Pages → Import an existing Git repository** with the settings above.
 
-The workflow runs at `00:17`, `06:17`, `12:17` and `18:17` UTC, plus relevant code pushes and manual **Run workflow** requests. It checks the sources, builds and validates the site, then commits real observations in `data/offers.json`. Cloudflare builds from that data on repository updates. `site/` is derived output and is not committed.
+The workflow runs at `00:17`, `06:17`, `12:17` and `18:17` UTC, plus relevant code pushes and manual **Run workflow** requests. It checks the sources, builds and validates the site, then commits real observations in `data/offers.json` and substantive page dates in `data/page-state.json`. Cloudflare builds from that data on repository updates. `site/` is derived output and is not committed.
 
 The workflow uses GitHub's temporary, repository-scoped `GITHUB_TOKEN` via checkout. There are **no manually supplied API keys**, LLM calls, pip dependencies or persistent servers in the update/build pipeline. GitHub authentication and the Cloudflare GitHub App connection are still required at setup time.
 
