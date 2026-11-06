@@ -60,6 +60,27 @@ def billing_text(offer: dict) -> str:
     return offer.get("billing_period") or "Billing period not extracted — check source"
 
 
+def billing_group(offer: dict) -> str:
+    period = offer.get("billing_period", "").lower().strip()
+    if period in {"/year", "/yr", "per year", "annually"}:
+        return "annual"
+    if period in {"/mo", "/month", "per month", "monthly"}:
+        return "monthly"
+    return "other"
+
+
+def plan_specs(offer: dict) -> str:
+    """Show only hardware amounts explicitly present in the source details."""
+    details = offer.get("details", "")
+    specs = []
+    for label, pattern in [("vCPU", r"(?<![\d.])(\d+(?:\.\d+)?)\s+vCPU\b"), ("RAM", r"(\d+(?:\.\d+)?\s*[GM]B)\s+RAM"),
+                           ("Storage", r"(\d+(?:\.\d+)?\s*[GT]B)\s+(?:NVMe|SSD)")]:
+        match = re.search(pattern, details, re.I)
+        if match:
+            specs.append(f'<span><strong>{e(match[1])}</strong><small>{label}</small></span>')
+    return '<div class="spec-list">' + ''.join(specs) + '</div>' if specs else ''
+
+
 def offer_schema(offer: dict) -> dict:
     result = {"@type": "Offer", "url": offer["offer_url"]}
     if "price" in offer:
@@ -180,7 +201,11 @@ def build(config: dict, data: dict, output: Path, now: datetime | None = None) -
         provider = provider_map[offer["provider_id"]]
         kind = e(offer.get("discount_text") or ("Official promotion" if offer["kind"] == "promotion" else "Standard price"))
         terms = offer.get("terms") or "Check the provider for renewal, location and tax details."
-        return f'''<article class="offer-card"><div class="card-top"><div class="card-meta"><a class="provider-link" href="/providers/{e(provider['id'])}/">{e(provider['name'])}</a><span class="badge">{kind}</span></div><h3><a href="/deals/{offer['id']}/">{e(offer['title'])}</a></h3><div class="price">{e(price_text(offer))}<span class="currency">{'USD' if 'price' in offer else ''}</span></div><p class="billing">{e(billing_text(offer))}</p><p class="card-terms">{e(terms[:220])}</p></div><div class="card-bottom"><span class="meta">{e(timestamp(offer['fetched_at']).strftime('%b %d · %H:%M UTC'))}</span><a href="/deals/{offer['id']}/">Offer details ↗</a></div></article>'''
+        group = billing_group(offer)
+        billing_note = {"annual": "Annual total · USD", "monthly": "Published monthly rate · USD", "other": "Published billing period · USD"}[group]
+        if "price" not in offer:
+            billing_note = "Price not extracted · check the official source"
+        return f'''<article class="offer-card" data-provider="{e(provider['id'])}" data-billing="{group}" data-price="{e(offer.get('price', ''))}" data-kind="{e(offer['kind'])}" data-title="{e(offer['title'])}" data-search-text="{e(provider['name'] + ' ' + offer['title'] + ' ' + offer.get('details', ''))}" data-order="{current.index(offer)}"><div class="card-top"><div class="card-meta"><a class="provider-link provider-identity" href="/providers/{e(provider['id'])}/"><span class="provider-monogram" aria-hidden="true">{e(provider['name'][:1])}</span>{e(provider['name'])}</a><span class="badge">{kind}</span></div><h3><a href="/deals/{offer['id']}/">{e(offer['title'])}</a></h3><div class="price">{e(price_text(offer))}<span class="period">{e(billing_text(offer))}</span></div><p class="billing">{billing_note}</p>{plan_specs(offer)}<p class="card-terms">{e(terms)}</p></div><div class="card-bottom"><span class="meta">Checked {e(timestamp(offer['fetched_at']).strftime('%b %d · %H:%M UTC'))}</span><a href="/deals/{offer['id']}/">View plan <span aria-hidden="true">↗</span></a></div></article>'''
 
     empty = '<div class="empty"><h2>No current offers to show</h2><p>The official sources need a fresh check. Use the provider links below to verify pricing directly.</p></div>'
     failed = [p for p in data.get("providers", []) if p["id"] in provider_map and p.get("status") != "ok"]
@@ -189,7 +214,8 @@ def build(config: dict, data: dict, output: Path, now: datetime | None = None) -
     if failed:
         notice += '<div class="notice">The latest check could not read ' + e(", ".join(provider_map[p["id"]]["name"] for p in failed)) + '. Check their official pages for current pricing.</div>'
     tiles = "".join(f'<a class="provider-tile" href="/providers/{e(p["id"])}/"><span><strong>{e(p["name"])}</strong><span class="meta">{sum(o["provider_id"] == p["id"] for o in current)} current listings</span></span><span aria-hidden="true">↗</span></a>' for p in config["providers"])
-    content = templates["index"].substitute(headline=e(config["render"]["headline"]), intro=e(config["render"]["intro"]), offer_count=len(current), provider_count=len(provider_map), checked_at=e(display_time(data["checked_at"])), notice=notice, cards="".join(card(o) for o in current) or empty, providers=tiles)
+    provider_options = ''.join(f'<option value="{e(p["id"])}">{e(p["name"])}</option>' for p in config['providers'])
+    content = templates["index"].substitute(headline=e(config["render"]["headline"]), headline_accent=e(config["render"].get("headline_accent", "")), intro=e(config["render"]["intro"]), offer_count=len(current), provider_count=len(provider_map), checked_at=e(display_time(data["checked_at"])), notice=notice, cards="".join(card(o) for o in current) or empty, providers=tiles, provider_options=provider_options, server_art=(ROOT / 'templates/server.svg').read_text())
     render_page("/", f"VPS offers & transparent billing — {month} | {site['brand']}", f"Compare {len(current)} official VPS offers from {len(provider_map)} providers. Source links, published billing terms, and last-checked dates for {month}.", content, [list_schema(current, origin)], data["checked_at"])
 
     for provider in config["providers"]:
@@ -228,7 +254,7 @@ def build(config: dict, data: dict, output: Path, now: datetime | None = None) -
     render_page("/compare/", f"Compare VPS prices & billing — {month} | {site['brand']}", "Compare official VPS offers with their original billing period, verification date and source. No estimated discounts or invented coupon codes.", content, [list_schema(current, origin), breadcrumb_schema(compare_items, origin)], data["checked_at"])
 
     source_links = "".join(f'<li><a href="{e(p["source_url"])}">{e(p["name"])} official source</a></li>' for p in config["providers"])
-    about = f'''<article class="prose"><p class="eyebrow">SOURCES &amp; DISCLOSURE</p><h1>Know what the price means.</h1><p>We list offers and published prices from official VPS providers. Each listing keeps its source, original billing period and last-checked timestamp so you can verify the terms yourself.</p><h2>How we check</h2><p>We request the listed public pages about every six hours, following their robots.txt rules. We do not bypass challenges or sign in to collect offers. Automated schedules can be delayed or stopped.</p><p>A successful check means the price appeared on that source page. It is not a purchase test, stock guarantee, performance review or endorsement. Unless explicitly shown, renewal price, tax and eligibility were not extracted. Prices are shown in USD; we do not convert currencies.</p><p>When a source fails or an observation is more than {config['runtime']['stale_after_hours']} hours old at build time, the listing is excluded from the current offers. Known expiry dates are checked at each build. Always check the displayed observation date if the site has stopped updating.</p><h2>Official sources</h2><ul>{source_links}</ul><h2>Affiliate disclosure</h2><p>{e(disclosure)}</p><h2>Privacy</h2><p>This site does not add analytics or set its own cookies. Following a provider link takes you to a separate website with its own privacy policy and terms.</p><h2>Reuse and corrections</h2><p><a href="/data/offers.json">Download the current dataset</a> or <a href="{e(config['render']['repository'])}">inspect the public repository</a> to check the evidence or report an incorrect listing.</p></article>'''
+    about = f'''<article class="prose"><p class="eyebrow">THE METHOD / SOURCES &amp; DISCLOSURE</p><h1>A clear view of<br><em>the commitment.</em></h1><p>Choosing a server starts with a few practical questions: what does it cost, how long are you paying for, and where did that number come from? This index puts those answers beside the plan.</p><h2>01 / Follow the evidence</h2><p>We read public pricing pages from the providers listed below. Each observation includes its official source, capture time and the exact price text. Checks are scheduled every six hours; schedules can run late or stop. The date on each listing tells you when we last read it.</p><ul>{source_links}</ul><h2>02 / Read the whole commitment</h2><p>All prices are published USD amounts. An annual price is a yearly total; a monthly rate may be the equivalent of a longer prepaid commitment. We retain available renewal text and provider conditions. Missing tax, eligibility, stock or expiry information stays unspecified. The provider confirms the final payment at checkout.</p><p>A source check records what was on a page. It does not measure server performance, test a purchase or reserve availability. Promotions and ordinary starting prices are labelled separately.</p><h2>03 / Retire uncertain observations</h2><p>At each build, failed-source listings, known expired offers and observations older than {config['runtime']['stale_after_hours']} hours leave the current index. Their detail pages show the changed status. If updates stop, check the observation date and follow the official source before relying on a price.</p><h2>Links &amp; commissions</h2><p>{e(disclosure)}</p><h2>Your visit</h2><p>Search and filtering work in your browser. This site adds no analytics or cookies. When you follow a provider link, that website applies its own privacy policy and terms.</p><h2>Check our work</h2><p><a href="/data/offers.json">Download the recorded observations</a> to inspect the source evidence, or <a href="{e(config['render']['repository'])}">open the repository</a> to report a correction. Every listing is traceable to a public provider page.</p></article>'''
     render_page("/about/", f"Sources, checks & affiliate disclosure | {site['brand']}", "How we collect official VPS prices, handle failed checks and expired offers, and disclose affiliate links.", about, [], data["checked_at"])
 
     public_data = {**data, "providers": [p for p in data.get("providers", []) if p["id"] in provider_map], "offers": [{**o, "display_status": observed_status(o, config, now)} for o in offers]}
@@ -252,7 +278,7 @@ def build(config: dict, data: dict, output: Path, now: datetime | None = None) -
         if re.fullmatch(r"(?:providers/[a-z0-9-]+|deals/[a-f0-9]{16})/index\.html", filename):
             (output / filename).write_text(unavailable, encoding="utf-8")
     manifest_path.write_text(json.dumps(list(pages), indent=2) + "\n")
-    (output / "_headers").write_text("/*\n  X-Content-Type-Options: nosniff\n  Referrer-Policy: strict-origin-when-cross-origin\n  X-Frame-Options: DENY\n  Content-Security-Policy: default-src 'self'; script-src 'none'; style-src 'self'; img-src 'self'; base-uri 'none'; frame-ancestors 'none'\n  Cache-Control: public, max-age=0, must-revalidate\n/data/*\n  X-Robots-Tag: noindex\n/.generated.json\n  X-Robots-Tag: noindex\n", encoding="utf-8")
+    (output / "_headers").write_text("/*\n  X-Content-Type-Options: nosniff\n  Referrer-Policy: strict-origin-when-cross-origin\n  X-Frame-Options: DENY\n  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; base-uri 'none'; frame-ancestors 'none'; object-src 'none'\n  Cache-Control: public, max-age=0, must-revalidate\n/data/*\n  X-Robots-Tag: noindex\n/.generated.json\n  X-Robots-Tag: noindex\n", encoding="utf-8")
     return {"pages": len(pages), "current_offers": len(current), "providers": len(provider_map), "domain": origin}
 
 

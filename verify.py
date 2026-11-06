@@ -6,6 +6,7 @@
 import argparse
 import json
 from pathlib import Path
+import re
 from urllib.parse import urlsplit, unquote
 from xml.etree import ElementTree
 
@@ -19,6 +20,7 @@ def verify(output: Path, config: dict) -> dict:
     data = json.loads((output / "data/offers.json").read_text())
     offers = {o["id"]: o for o in data["offers"]}
     titles = set()
+    stylesheets = set()
     for filename in pages:
         html = (output / filename).read_text()
         doc = Document(html).root
@@ -31,7 +33,17 @@ def verify(output: Path, config: dict) -> dict:
         assert len(canonical) == 1 and canonical[0].attrs["href"] == expected, filename + " invalid canonical"
         assert len(doc.select("h1")) == 1, filename + " must have one h1"
         assert doc.select('meta[name="description"]'), filename + " missing description"
-        graph = json.loads(doc.select('script[type="application/ld+json"]')[0].text(False))["@graph"]
+        structured_scripts = doc.select('script[type="application/ld+json"]')
+        assert len(structured_scripts) == 1 and "src" not in structured_scripts[0].attrs, filename + " invalid JSON-LD script"
+        graph = json.loads(structured_scripts[0].text(False))["@graph"]
+        executable_scripts = [node for node in doc.select("script") if node not in structured_scripts]
+        assert len(executable_scripts) == 1, filename + " must load one local interaction script"
+        script = executable_scripts[0]
+        script_url = urlsplit(script.attrs.get("src", ""))
+        assert (not script_url.netloc and not script_url.scheme) or (script_url.scheme + "://" + script_url.netloc == origin), filename + " external interaction script"
+        assert script_url.path == "/assets/app.js" and "defer" in script.attrs, filename + " invalid interaction script"
+        assert (output / "assets/app.js").is_file(), filename + " missing interaction script"
+        assert not script.text(False).strip(), filename + " unexpected inline script"
         if filename.startswith("deals/"):
             offer = offers[filename.split("/")[1]]
             products = [item for item in graph if item["@type"] == "Product"]
@@ -60,6 +72,16 @@ def verify(output: Path, config: dict) -> dict:
             if parsed.path.endswith("/"):
                 target /= "index.html"
             assert target.is_file(), filename + " broken internal link: " + value
+            if node.tag == "link" and node.attrs.get("rel") == "stylesheet":
+                stylesheets.add(target)
+    assert stylesheets, "Missing local stylesheet"
+    for stylesheet in stylesheets:
+        for match in re.finditer(r"url\(\s*(['\"]?)(.*?)\1\s*\)", stylesheet.read_text(), re.I):
+            value = match[2].strip()
+            parsed = urlsplit(value)
+            assert not parsed.scheme and not parsed.netloc, "Stylesheet resource must be local: " + value
+            target = (output if parsed.path.startswith("/") else stylesheet.parent) / unquote(parsed.path).lstrip("/")
+            assert target.is_file(), "Broken stylesheet resource: " + value
     sitemap = ElementTree.parse(output / "sitemap.xml")
     namespace = {"s": "http://www.sitemaps.org/schemas/sitemap/0.9"}
     entries = sitemap.findall("s:url", namespace)
@@ -67,7 +89,7 @@ def verify(output: Path, config: dict) -> dict:
         assert entry.find("s:loc", namespace).text.startswith(origin + "/")
         assert entry.find("s:lastmod", namespace).text
     assert f"Sitemap: {origin}/sitemap.xml" in (output / "robots.txt").read_text()
-    return {"valid_pages": len(pages), "sitemap_urls": len(entries), "offers": len(offers), "checks": "metadata, canonical, source lineage, JSON-LD, local links"}
+    return {"valid_pages": len(pages), "sitemap_urls": len(entries), "offers": len(offers), "checks": "metadata, canonical, source lineage, JSON-LD, local links, interaction script, stylesheet resources"}
 
 
 if __name__ == "__main__":

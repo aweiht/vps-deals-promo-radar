@@ -11,7 +11,7 @@ import re
 import tempfile
 import unittest
 
-from build import build, observed_status
+from build import build, observed_status, plan_specs
 from config import ROOT, https_url, read_config
 from scraper import collect, normalize_price, parse_offers, Document
 from verify import verify
@@ -174,6 +174,66 @@ class PipelineTests(unittest.TestCase):
         result = build(self.config, self.data, self.work, NOW)
         self.assertEqual(result["current_offers"], 1)
         self.assertEqual(verify(self.work, self.config)["offers"], 1)
+
+    def test_filter_data_keeps_billing_and_missing_price_distinct(self):
+        monthly = {**self.offer, "id": "a" * 16, "title": "Monthly fixture", "billing_period": "/mo", "price": "6.49"}
+        unpriced = {**self.offer, "id": "b" * 16, "title": "Unpriced fixture"}
+        for key in ("price", "currency", "price_evidence", "billing_period"):
+            unpriced.pop(key, None)
+        self.data["offers"] = [self.offer, monthly, unpriced]
+        build(self.config, self.data, self.work, NOW)
+        cards = Document((self.work / "index.html").read_text()).root.select("article.offer-card")
+        by_title = {card.attrs["data-title"]: card for card in cards}
+        annual_card = by_title[self.offer["title"]]
+        self.assertEqual(annual_card.attrs["data-billing"], "annual")
+        self.assertEqual(annual_card.attrs["data-price"], "21.99")
+        self.assertIn("/year", annual_card.text())
+        monthly_card = by_title["Monthly fixture"]
+        self.assertEqual(monthly_card.attrs["data-billing"], "monthly")
+        self.assertEqual(monthly_card.attrs["data-price"], "6.49")
+        self.assertIn("/mo", monthly_card.text())
+        unpriced_card = by_title["Unpriced fixture"]
+        self.assertEqual(unpriced_card.attrs["data-billing"], "other")
+        self.assertEqual(unpriced_card.attrs["data-price"], "")
+        self.assertIn("See source", unpriced_card.text())
+        self.assertNotIn("$0", unpriced_card.text())
+        self.assertEqual(verify(self.work, self.config)["offers"], 3)
+
+    def test_hardware_summary_uses_only_explicit_matching_source_amounts(self):
+        details = "10 TB bandwidth 640 GB NVMe disk space 32 GB RAM 8 vCPU cores 1 IPv4 address"
+        summary = Document(plan_specs({"details": details})).root
+        amounts = [node.text() for node in summary.select("strong")]
+        labels = [node.text() for node in summary.select("small")]
+        self.assertEqual(dict(zip(labels, amounts)), {"vCPU": "8", "RAM": "32 GB", "Storage": "640 GB"})
+        self.assertEqual(plan_specs({}), "")
+        self.assertIn("<strong>1.5</strong>", plan_specs({"details": "1.5 vCPU cores"}))
+        self.assertEqual(plan_specs({"title": "999 GB RAM", "details": "10 TB bandwidth, full root access, 1 IPv4 address"}), "")
+
+    def test_artifact_rejects_remote_inline_or_missing_interaction_script(self):
+        build(self.config, self.data, self.work, NOW)
+        homepage = self.work / "index.html"
+        html = homepage.read_text()
+        with self.subTest("remote script"):
+            homepage.write_text(html.replace('src="/assets/app.js"', 'src="https://external.example/app.js"'))
+            with self.assertRaisesRegex(AssertionError, "external interaction script"):
+                verify(self.work, self.config)
+        with self.subTest("inline script"):
+            homepage.write_text(html.replace('</head>', '<script>alert(1)</script></head>'))
+            with self.assertRaisesRegex(AssertionError, "one local interaction script"):
+                verify(self.work, self.config)
+        homepage.write_text(html)
+        with self.subTest("missing local asset"):
+            script = self.work / "assets/app.js"
+            script.rename(self.work / "assets/app.js.test-backup")
+            with self.assertRaisesRegex(AssertionError, "missing interaction script"):
+                verify(self.work, self.config)
+
+    def test_artifact_checks_font_and_other_stylesheet_resources(self):
+        build(self.config, self.data, self.work, NOW)
+        stylesheet = self.work / "assets/style.css"
+        stylesheet.write_text(stylesheet.read_text() + '\n@font-face { src: url("/assets/missing-fixture-font.woff2"); }')
+        with self.assertRaisesRegex(AssertionError, "Broken stylesheet resource"):
+            verify(self.work, self.config)
 
 
 if __name__ == "__main__":

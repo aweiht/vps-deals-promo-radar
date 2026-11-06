@@ -3,7 +3,7 @@
 
 ::STATE{@PROJECT, purpose:为英语用户提供可溯源的官方 VPS 优惠与价格对比, owner:user}
 ::MODULE{STACK|title:技术栈}
-  Python 3.11+ 标准库；静态 HTML/CSS；无运行时推理、第三方 Python 包、手工 API 密钥或付费服务。
+  Python 3.11+ 标准库；静态 HTML/CSS 与无依赖原生 JavaScript 渐进交互；无运行时推理、第三方 Python 包、手工 API 密钥或付费服务。
 ::MODULE{LAYOUT|title:目录与命名}
   .ilang/ 存放唯一站点配置 site.ilang；templates/ 存放 HTML 模板；assets/ 存放品牌样式与图片。
   data/ 存放抓取结果和来源状态；tests/ 存放确定性验证与最小来源样例；site/ 为生成输出。

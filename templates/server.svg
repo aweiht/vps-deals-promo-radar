@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 490" role="img" aria-label="Illustrated three-layer server, with compute, memory and storage">
+<defs><pattern id="grid" width="30" height="30" patternUnits="userSpaceOnUse" patternTransform="matrix(.866 .5 -.866 .5 270 140)"><path d="M30 0H0V30" fill="none" stroke="#d2d1c5" stroke-width=".65"/></pattern><linearGradient id="top" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#faf9f3"/><stop offset="1" stop-color="#deded2"/></linearGradient><linearGradient id="front"><stop stop-color="#d5d6ca"/><stop offset="1" stop-color="#f1f0e7"/></linearGradient><linearGradient id="orange"><stop stop-color="#f88555"/><stop offset="1" stop-color="#e45029"/></linearGradient><filter id="shadow" x="-30%" y="-50%" width="170%" height="220%"><feGaussianBlur stdDeviation="12"/></filter></defs>
+<ellipse cx="280" cy="366" rx="147" ry="46" fill="#999b89" opacity=".14" filter="url(#shadow)"/>
+<path d="M25 270 270 130 520 274 275 416Z" fill="url(#grid)"/>
+<g fill="none" stroke="#bcbdb0" stroke-width=".8"><path d="m55 300 215 124 224-129"/><path d="m55 295v10m439-15v10M270 419v10"/><path d="M103 233v126M437 233v123" stroke-dasharray="3 5"/></g>
+<g class="server-layer layer-base">
+<path d="m110 275 164-94 164 94v34l-164 95-164-95z" fill="url(#front)" stroke="#8d9080"/>
+<path d="m274 370 164-95v34l-164 95z" fill="#bcbfb1" stroke="#8d9080"/>
+<path d="m110 275 164-94 164 94-164 95z" fill="url(#top)" stroke="#8d9080"/>
+<path d="m129 275 145-83 145 83-145 83z" fill="none" stroke="#c2c4b7"/>
+<g stroke="#777d6c" stroke-width="3"><path d="m130 300 58 33m-58-26 58 33m-58-26 58 33"/></g><g fill="#eb5d32"><ellipse cx="238" cy="364" rx="3" ry="4" transform="rotate(-30 238 364)"/><ellipse cx="250" cy="371" rx="3" ry="4" transform="rotate(-30 250 371)"/></g>
+<path d="m308 362 44-25v10l-44 25z" fill="#717a6b"/><path d="m366 329 35-20v10l-35 20z" fill="#717a6b"/>
+</g>
+<g class="server-layer layer-middle">
+<path d="m110 222 164-94 164 94v33l-164 95-164-95z" fill="url(#front)" stroke="#8d9080"/>
+<path d="m274 317 164-95v33l-164 95z" fill="#bcbfb1" stroke="#8d9080"/>
+<path d="m110 222 164-94 164 94-164 95z" fill="url(#top)" stroke="#8d9080"/>
+<path d="m145 220 130-74 125 72-130 74z" fill="#888f7b" stroke="#6b7461"/>
+<g fill="#3f493c" stroke="#b5bba6" stroke-width="2"><path d="m193 222 65-37 16 9-65 37z"/><path d="m218 236 65-37 16 9-65 37z"/><path d="m243 250 65-37 16 9-65 37z"/></g>
+<g stroke="#777d6c" stroke-width="3"><path d="m130 247 58 33m-58-26 58 33m-58-26 58 33"/></g><ellipse cx="247" cy="316" rx="3" ry="4" fill="#e66436" transform="rotate(-30 247 316)"/>
+<path d="m310 309 79-45" stroke="#838979" stroke-width="3" stroke-dasharray="3 4"/>
+</g>
+<g class="server-layer layer-top">
+<path d="m110 167 164-94 164 94v35l-164 95-164-95z" fill="#ee7045" stroke="#ad472c"/>
+<path d="m274 262 164-95v35l-164 95z" fill="#d54b27" stroke="#ad472c"/>
+<path d="m110 167 164-94 164 94-164 95z" fill="url(#orange)" stroke="#b94a2c"/>
+<path d="m127 167 147-84 147 84-147 84z" fill="none" stroke="#ffc19a" stroke-width=".8"/>
+<g stroke="#ad472c" stroke-width="1" opacity=".65"><path d="m157 164 56 32m-47-38 56 32m-47-38 56 32m-47-38 56 32m-47-38 56 32m-47-38 56 32m-47-38 56 32m-47-38 56 32m-47-38 56 32"/></g>
+<path d="m272 147 45-26 45 26v8l-45 26-45-26z" fill="#a74129"/><path d="m272 147 45-26 45 26-45 26z" fill="#242a24" stroke="#e9a07a"/>
+<path d="m289 147 28-16 28 16-28 16z" fill="none" stroke="#f4a47b" stroke-width=".7"/>
+<g fill="#b8492c"><path d="m130 190 60 35v4l-60-35zM130 199l60 35v4l-60-35zM130 208l60 35v4l-60-35z"/></g>
+<g fill="#ffe7ce"><ellipse cx="241" cy="261" rx="3" ry="4" transform="rotate(-30 241 261)"/><ellipse cx="251" cy="267" rx="3" ry="4" transform="rotate(-30 251 267)"/></g>
+<path d="m309 261 50-29v9l-50 29z" fill="#9e3824"/>
+<g fill="#f8c5a1"><path d="m380 219 5-3v9l-5 3zM390 213l5-3v9l-5 3zM400 207l5-3v9l-5 3z"/></g>
+</g>
+<g class="art-label"><path d="M410 114h72M430 222h52M433 339h49" fill="none" stroke="#9e9e90"/><text x="444" y="104">COMPUTE</text><text x="444" y="212">MEMORY</text><text x="444" y="329">STORAGE</text></g>
+<g fill="#b6b8aa"><path d="M54 152h10m-5-5v10M466 380h10m-5-5v10" stroke="#b6b8aa"/><circle cx="481" cy="164" r="2"/><circle cx="75" cy="355" r="2"/></g>
+</svg>

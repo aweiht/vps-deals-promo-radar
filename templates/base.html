@@ -1,34 +1,26 @@
 <!doctype html>
 <html lang="$locale">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>$title</title>
-  <meta name="description" content="$description">
-  <meta name="robots" content="$robots">
-  <link rel="canonical" href="$canonical">
-  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="/assets/style.css">
-  <meta name="theme-color" content="#13304d">
-  <meta property="og:type" content="website">
-  <meta property="og:site_name" content="$brand">
-  <meta property="og:locale" content="en_US">
-  <meta property="og:title" content="$title">
-  <meta property="og:description" content="$description">
-  <meta property="og:url" content="$canonical">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="$title">
-  <meta name="twitter:description" content="$description">
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>$title</title><meta name="description" content="$description"><meta name="robots" content="$robots">
+  <link rel="canonical" href="$canonical"><link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="/assets/dm-sans.ttf" as="font" type="font/ttf" crossorigin>
+  <link rel="stylesheet" href="/assets/style.css"><script defer src="/assets/app.js"></script>
+  <meta name="theme-color" content="#f5f3ed">
+  <meta property="og:type" content="website"><meta property="og:site_name" content="$brand"><meta property="og:locale" content="en_US">
+  <meta property="og:title" content="$title"><meta property="og:description" content="$description"><meta property="og:url" content="$canonical">
+  <meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="$title"><meta name="twitter:description" content="$description">
   $social_image
   <script type="application/ld+json">$jsonld</script>
 </head>
 <body>
   <a class="skip" href="#main">Skip to content</a>
   <header class="header"><div class="header-inner">
-    <a class="brand" href="/" aria-label="$brand home"><span class="brand-mark" aria-hidden="true">v/</span>$brand</a>
-    <nav aria-label="Main navigation"><a href="/">Offers</a><a href="/compare/">Compare</a><a href="/about/">How we check</a></nav>
+    <a class="brand" href="/" aria-label="$brand home"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>$brand<span class="brand-dot">•</span></a>
+    <nav aria-label="Main navigation"><a data-nav href="/">The index</a><a data-nav href="/compare/">Compare</a><a data-nav href="/about/">Our method</a></nav>
+    <a class="nav-cta" href="/#offers">Find your server <span aria-hidden="true">↗</span></a>
   </div></header>
   <main id="main">$content</main>
-  <footer class="footer"><div><a class="brand" href="/">$brand</a><p>Official sources. Clear billing terms.</p></div><div class="footer-links"><a href="/about/">Sources &amp; disclosure</a><a href="$repository">GitHub</a><a href="/data/offers.json">Download data</a></div><p class="fine-print">$disclosure</p></footer>
+  <footer class="footer"><div class="footer-top"><div><a class="brand" href="/">$brand<span class="brand-dot">•</span></a><p>A little infrastructure.<br>A lot of potential.</p></div><div class="footer-links"><a href="/compare/">Compare plans ↗</a><a href="/about/">Sources &amp; disclosure ↗</a><a href="$repository">Open repository ↗</a><a href="/data/offers.json">Download data ↗</a></div></div><div class="footer-bottom"><p>$disclosure</p><span class="mono">INDEPENDENT VPS PRICE INDEX<br>ENGLISH / USD</span></div></footer>
 </body>
 </html>
