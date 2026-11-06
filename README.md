@@ -16,7 +16,7 @@ Search, provider / billing / promotion filters and period-grouped price sorting 
 
 Scope authorized: redesign this existing site, verify, push and publish through its existing GitHub → Cloudflare connection. No new service, secret or recurring cost was introduced. The existing remote configuration already used `vpsdealsguide.com`; the redesign preserves it.
 
-Local acceptance: 20 tests; 19 pages / 13 observed offers; metadata, source lineage, scripts, fonts and links verified. Browser checks covered 320 px and 390 px mobile layouts, desktop, combined filters, no-match reset, annual-price ordering and the server interaction. Deployment evidence is recorded after the publishing run below. Earlier acceptance sections are historical.
+Local acceptance: 20 tests; 19 pages / 13 observed offers; metadata, source lineage, scripts, fonts and links verified. Browser checks covered 320 px and 390 px mobile layouts, desktop, combined filters, no-match reset, annual-price ordering and the server interaction. Production acceptance: [Actions run 42258688812](https://github.com/aweiht/vps-deals-promo-radar/actions/runs/42258688812) passed on design commit `aa25ad1`; it collected all three official sources and created observation commit `8737247`. Cloudflare deployment `867cfbd7-e500-466f-a8d2-1994690250a7` succeeded for that data commit. All 28 production HTML/data/style/script/font/image/sitemap URLs were accessible and byte-identical to the local build. The production browser verified the 13-offer index, standard-price filtering (4), annual filtering (5), layer interaction, 390 px layout and no console errors. Desktop/full-page/mobile screenshots and the URL check are kept in ignored `evidence/redesign/`. Earlier acceptance sections are historical.
 
 ## Run
 
@@ -34,7 +34,7 @@ python3 -m http.server 8765 --directory site
 
 The public `aweiht/vps-deals-promo-radar` GitHub repository is connected to Cloudflare Pages project `vps-deals-promo-radar`, with automatic production deployments enabled. Build command: `python build.py`. Output: `site`. Production branch: `main`. Framework preset: none. No environment secrets are configured.
 
-Cloudflare assigned the `-69v` hostname suffix. The actual HTTPS origin is recorded in `.ilang/site.ilang` and used for every canonical URL, social URL and sitemap entry. To reproduce the deployment, use **Cloudflare → Workers & Pages → Create → Pages → Import an existing Git repository** with the settings above.
+Cloudflare assigned the original `-69v` Pages hostname suffix. The current canonical origin is `https://vpsdealsguide.com`, as recorded in `.ilang/site.ilang`, and is used for canonical URLs, social URLs and sitemap entries. To reproduce the deployment, use **Cloudflare → Workers & Pages → Create → Pages → Import an existing Git repository** with the settings above.
 
 The workflow runs at `00:17`, `06:17`, `12:17` and `18:17` UTC, plus relevant code pushes and manual **Run workflow** requests. It checks the sources, builds and validates the site, then commits real observations in `data/offers.json`. Cloudflare builds from that data on repository updates. `site/` is derived output and is not committed.
 
