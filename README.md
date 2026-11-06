@@ -8,6 +8,16 @@ Live site: [vpsdealsguide.com](https://vpsdealsguide.com/) · [Pages hostname](h
 
 Defaults: VPS hosting, `vps-deals`, `en-US`, USD. The provider list and extraction rules live in [.ilang/site.ilang](.ilang/site.ilang).
 
+## Copy cleanup and SEO audit — 2026-11-07
+
+Replaced abstract headlines, slogans and section labels with VPS pricing, billing and source descriptions. Home, provider, comparison and individual plan headings now identify their contents directly. Plan title tags include the original billing period; starting-price records are labelled “From”. The social card uses the same plain wording. Product schema, URL structure, pricing data and source failure rules are unchanged.
+
+Read-only audit: all 19 canonical pages returned HTTP 200 with indexable metadata, unique title/description/H1, source-consistent JSON-LD and valid internal links. robots.txt and the 19-URL sitemap were accessible; unknown routes returned real 404. HTTP and path normalization redirects worked. The Pages hostname still serves 200 with the custom-domain canonical; www does not resolve.
+
+Google [PageSpeed mobile report](https://pagespeed.web.dev/analysis/https-vpsdealsguide-com/e0p331g59s?form_factor=mobile), captured 2026-11-07 01:20 Asia/Shanghai before the copy-only release: performance 98, accessibility 100, best practices 92, SEO 100; LCP 1.5 s, TBT 0 ms, CLS 0. This is a homepage lab test. CrUX field data is unavailable; the current Search Console account lacks access to this site's property, so actual indexing, selected canonicals, traffic and ranking remain unverified. Lighthouse identified a Cloudflare Insights script blocked by the existing same-origin CSP. No CSP relaxation or analytics setting change was made.
+
+Open recommendations, not automatically implemented by this audit: separate temporary source failure from detail-page indexing; use substantive content modification times for sitemap lastmod; expose OVH hardware specifications already present in official evidence; consolidate the Pages hostname with a path-preserving redirect. Decide whether to disable the injected Cloudflare Insights script or configure analytics consistently. Optional www support is an entry-point choice, not a blocker for the canonical apex. Full private audit evidence is in ignored `evidence/seo-audit/`.
+
 ## Current design release — 2026-11-07
 
 The site now uses an original editorial design: warm paper, ink typography, orange accents, an interactive SVG server illustration, and locally hosted DM Sans / Instrument Serif fonts (licenses in `assets/`). Home, provider, plan, comparison and methodology pages share the same responsive system. The 1200 × 630 social image is a static rendering of this artwork.

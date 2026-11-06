@@ -18,9 +18,9 @@
   max_offers_per_provider: 24
 
 ::MODULE{RENDER|title:英语站点渲染规则}
-  headline: "Small server."
-  headline_accent: "Big possibilities."
-  intro: "Find a home for what you’re building. Explore official VPS offers, with the price, commitment and source laid out for you."
+  headline: "VPS deals."
+  headline_accent: "Prices & terms."
+  intro: "Compare published VPS prices, billing periods and renewal terms from official hosting providers."
   repository: "https://github.com/aweiht/vps-deals-promo-radar"
 
 ::MODULE{SOURCE:racknerd|title:官方 VPS specials 卡片}
