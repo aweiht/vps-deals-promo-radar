@@ -1,13 +1,13 @@
 {
   "schema_version": 1,
-  "checked_at": "2026-11-20T20:13:11Z",
+  "checked_at": "2026-11-21T07:03:03Z",
   "locale": "en-US",
   "providers": [
     {
       "id": "racknerd",
       "name": "RackNerd",
       "source_url": "https://www.racknerd.com/specials/",
-      "checked_at": "2026-11-20T20:13:11Z",
+      "checked_at": "2026-11-21T07:03:03Z",
       "status": "error",
       "offer_count": 0,
       "error": "No offers matched; source markup may have changed"
@@ -16,7 +16,7 @@
       "id": "hostinger",
       "name": "Hostinger",
       "source_url": "https://www.hostinger.com/vps-hosting?lang=en",
-      "checked_at": "2026-11-20T20:13:14Z",
+      "checked_at": "2026-11-21T07:03:06Z",
       "status": "error",
       "offer_count": 0,
       "error": "No offers matched; source markup may have changed"
@@ -25,10 +25,10 @@
       "id": "ovhcloud",
       "name": "OVHcloud",
       "source_url": "https://us.ovhcloud.com/vps/",
-      "checked_at": "2026-11-20T20:13:15Z",
+      "checked_at": "2026-11-21T07:03:08Z",
       "status": "ok",
       "offer_count": 4,
-      "fetched_at": "2026-11-20T20:13:16Z",
+      "fetched_at": "2026-11-21T07:03:09Z",
       "source_sha256": "6ea619093ac3f6abd4a5c1fe8be101f84f1fd161e48e8790cf3c36caf7523b7b"
     }
   ],
@@ -206,7 +206,7 @@
       "kind": "standard_price",
       "offer_url": "https://us.ovhcloud.com/vps/configurator/?planCode=vps-2027-model1",
       "source_url": "https://us.ovhcloud.com/vps/",
-      "fetched_at": "2026-11-20T20:13:16Z",
+      "fetched_at": "2026-11-21T07:03:09Z",
       "source_sha256": "6ea619093ac3f6abd4a5c1fe8be101f84f1fd161e48e8790cf3c36caf7523b7b",
       "source_status": "ok",
       "evidence": "2027 VPS-1 Starting at $4.54 /month Configure 2 vCores 4 GB RAM 40 GB SSD NVMe Daily backup of the previous 24 hours Unlimited traffic 500 Mbps public bandwidth",
@@ -224,7 +224,7 @@
       "kind": "standard_price",
       "offer_url": "https://us.ovhcloud.com/vps/configurator/?planCode=vps-2027-model2",
       "source_url": "https://us.ovhcloud.com/vps/",
-      "fetched_at": "2026-11-20T20:13:16Z",
+      "fetched_at": "2026-11-21T07:03:09Z",
       "source_sha256": "6ea619093ac3f6abd4a5c1fe8be101f84f1fd161e48e8790cf3c36caf7523b7b",
       "source_status": "ok",
       "evidence": "2027 VPS-2 Starting at $8.50 /month Configure 4 vCores 8 GB RAM 75 GB SSD NVMe Daily backup of the previous 24 hours Unlimited traffic 1 Gbps public bandwidth",
@@ -242,7 +242,7 @@
       "kind": "standard_price",
       "offer_url": "https://us.ovhcloud.com/vps/configurator/?planCode=vps-2027-model3",
       "source_url": "https://us.ovhcloud.com/vps/",
-      "fetched_at": "2026-11-20T20:13:16Z",
+      "fetched_at": "2026-11-21T07:03:09Z",
       "source_sha256": "6ea619093ac3f6abd4a5c1fe8be101f84f1fd161e48e8790cf3c36caf7523b7b",
       "source_status": "ok",
       "evidence": "2027 VPS-3 Starting at $12.32 /month Configure 6 vCores 12 GB RAM 100 GB SSD NVMe Daily backup of the previous 24 hours Unlimited traffic 2 Gbps public bandwidth",
@@ -260,7 +260,7 @@
       "kind": "standard_price",
       "offer_url": "https://us.ovhcloud.com/vps/configurator/?planCode=vps-2027-model4",
       "source_url": "https://us.ovhcloud.com/vps/",
-      "fetched_at": "2026-11-20T20:13:16Z",
+      "fetched_at": "2026-11-21T07:03:09Z",
       "source_sha256": "6ea619093ac3f6abd4a5c1fe8be101f84f1fd161e48e8790cf3c36caf7523b7b",
       "source_status": "ok",
       "evidence": "2027 VPS-4 Starting at $23.37 /month Configure 8 vCore 24 GB RAM 200 GB SSD NVMe Daily backup of the previous 24 hours Unlimited traffic 3 Gbps public bandwidth",
